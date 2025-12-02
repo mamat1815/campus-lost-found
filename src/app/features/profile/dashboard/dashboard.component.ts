@@ -116,13 +116,18 @@ export class DashboardComponent implements OnInit {
     downloadQrCode(asset: Asset): void {
         if (!asset.qr_code_url) return;
 
-        // If the URL is relative, prepend the base URL (or let the browser handle it if it's same origin)
-        // Assuming qr_code_url might be a full URL or relative path.
-        // If it's from the backend, it might be relative or absolute.
-        // Let's try to use a direct link first.
+        let url = asset.qr_code_url;
+        if (!url.startsWith('http')) {
+            // Handle relative paths
+            if (url.startsWith('/')) {
+                url = `https://api.afsar.my.id${url}`;
+            } else {
+                url = `https://api.afsar.my.id/${url}`;
+            }
+        }
 
         const link = document.createElement('a');
-        link.href = asset.qr_code_url;
+        link.href = url;
         link.download = `qr-code-${asset.id}.png`;
         link.target = '_blank';
         document.body.appendChild(link);
