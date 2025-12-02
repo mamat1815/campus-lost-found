@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ApiService } from '../../../core/services/api.service';
-import { AuthService } from '../../../core/services/auth.service';
 import { CampusLocation } from '../../../core/models/item.model';
 import { FileUploadComponent } from '../../../shared/components/file-upload/file-upload.component';
 
@@ -78,8 +77,7 @@ export class ScanAssetComponent implements OnInit {
         private fb: FormBuilder,
         private route: ActivatedRoute,
         private router: Router,
-        private apiService: ApiService,
-        private authService: AuthService
+        private apiService: ApiService
     ) {
         this.scanForm = this.fb.group({
             location_id: ['', Validators.required],
@@ -113,34 +111,16 @@ export class ScanAssetComponent implements OnInit {
         if (this.scanForm.invalid || !this.assetId) return;
 
         this.isSubmitting = true;
-
-        const currentUser = this.authService.getToken() ? JSON.parse(localStorage.getItem('user') || '{}') : null;
-
         const requestData = {
             ...this.scanForm.value,
-            image_url: this.uploadedImageUrl,
-            finder_id: currentUser?.id
+            image_url: this.uploadedImageUrl
         };
 
         this.apiService.reportAssetFound(this.assetId, requestData).subscribe({
             next: () => {
-                // As requested: Update lost mode to true after reporting
-                if (this.assetId) {
-                    this.apiService.updateAssetLostMode(this.assetId, true).subscribe({
-                        next: () => {
-                            this.isSubmitting = false;
-                            alert('Thank you! The owner has been notified and asset marked as lost.');
-                            this.router.navigate(['/']);
-                        },
-                        error: (err) => {
-                            console.error('Failed to update lost mode', err);
-                            // Even if this fails, the report was successful, so we probably still want to finish
-                            this.isSubmitting = false;
-                            alert('Report submitted, but failed to update status. Owner notified.');
-                            this.router.navigate(['/']);
-                        }
-                    });
-                }
+                this.isSubmitting = false;
+                alert('Thank you! The owner has been notified.');
+                this.router.navigate(['/']);
             },
             error: (err) => {
                 this.isSubmitting = false;

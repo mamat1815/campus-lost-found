@@ -96,11 +96,7 @@ export class ApiService {
         return this.http.post<Asset>(`${this.baseUrl}/assets`, data);
     }
 
-    reportAssetFound(id: string, data: { location_id: string; image_url?: string; note?: string; finder_id?: string }): Observable<any> {
+    reportAssetFound(id: string, data: { location_id: string; image_url?: string; note?: string }): Observable<any> {
         return this.http.post(`${this.baseUrl}/assets/${id}/report-found`, data);
-    }
-
-    updateAssetLostMode(id: string, lostMode: boolean): Observable<any> {
-        return this.http.put(`${this.baseUrl}/assets/${id}/lost-mode`, { lost_mode: lostMode });
     }
 }
