@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ApiService } from '../../../core/services/api.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { CampusLocation } from '../../../core/models/item.model';
 import { FileUploadComponent } from '../../../shared/components/file-upload/file-upload.component';
 
@@ -77,7 +78,8 @@ export class ScanAssetComponent implements OnInit {
         private fb: FormBuilder,
         private route: ActivatedRoute,
         private router: Router,
-        private apiService: ApiService
+        private apiService: ApiService,
+        private authService: AuthService
     ) {
         this.scanForm = this.fb.group({
             location_id: ['', Validators.required],
@@ -111,9 +113,13 @@ export class ScanAssetComponent implements OnInit {
         if (this.scanForm.invalid || !this.assetId) return;
 
         this.isSubmitting = true;
+
+        const currentUser = this.authService.getToken() ? JSON.parse(localStorage.getItem('user') || '{}') : null;
+
         const requestData = {
             ...this.scanForm.value,
-            image_url: this.uploadedImageUrl
+            image_url: this.uploadedImageUrl,
+            finder_id: currentUser?.id
         };
 
         this.apiService.reportAssetFound(this.assetId, requestData).subscribe({

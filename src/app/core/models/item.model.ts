@@ -142,4 +142,5 @@ export interface ReportFoundRequest {
     location_id: string;
     image_url?: string;
     note?: string;
+    finder_id?: string;
 }
