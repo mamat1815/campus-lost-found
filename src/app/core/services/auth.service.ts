@@ -9,7 +9,7 @@ import { LoginRequest, RegisterRequest, AuthResponse, UserDetailResponse } from 
     providedIn: 'root'
 })
 export class AuthService {
-    private baseUrl = 'http://157.10.161.213:3000/api/v1';
+    private baseUrl = 'https://api.afsar.my.id/api/v1';
     private currentUserSubject = new BehaviorSubject<UserDetailResponse | null>(null);
     public currentUser$ = this.currentUserSubject.asObservable();
 

@@ -9,7 +9,7 @@ import { UserDetailResponse, UpdateUserRequest } from '../models/user.model';
     providedIn: 'root'
 })
 export class ApiService {
-    private baseUrl = 'http://157.10.161.213:3000/api/v1';
+    private baseUrl = 'https://api.afsar.my.id/api/v1';
 
     constructor(private http: HttpClient) { }
 

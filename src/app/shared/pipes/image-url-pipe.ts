@@ -14,9 +14,9 @@ export class ImageUrlPipe implements PipeTransform {
       return value;
     }
     if (value.startsWith('/')) {
-      return `http://157.10.161.213:3000${value}`;
+      return `https://api.afsar.my.id/${value}`;
     }
-    return `http://157.10.161.213:3000/${value}`;
+    return `https://api.afsar.my.id/${value}`;
   }
 
 }
