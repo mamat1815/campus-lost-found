@@ -1,0 +1,94 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { ItemResponse, Item, CreateLostItemRequest, CreateFoundItemRequest, CampusLocation, ItemCategory } from '../models/item.model';
+import { Claim, CreateClaimRequest, ClaimResponse } from '../models/claim.model';
+import { UserDetailResponse, UpdateUserRequest } from '../models/user.model';
+
+@Injectable({
+    providedIn: 'root'
+})
+export class ApiService {
+    private baseUrl = 'http://157.10.161.213:3000/api/v1';
+
+    constructor(private http: HttpClient) { }
+
+    // Items
+    getItems(filters?: { status?: string; type?: 'LOST' | 'FOUND' }): Observable<ItemResponse[]> {
+        let params = new HttpParams();
+        if (filters?.status) params = params.set('status', filters.status);
+        if (filters?.type) params = params.set('type', filters.type);
+
+        return this.http.get<ItemResponse[]>(`${this.baseUrl}/items`, { params });
+    }
+
+    getItem(id: string): Observable<ItemResponse> {
+        return this.http.get<ItemResponse>(`${this.baseUrl}/items/${id}`);
+    }
+
+    getMyItems(): Observable<ItemResponse[]> {
+        return this.http.get<ItemResponse[]>(`${this.baseUrl}/users/me/items`);
+    }
+
+    reportLostItem(data: CreateLostItemRequest): Observable<ItemResponse> {
+        return this.http.post<ItemResponse>(`${this.baseUrl}/items/lost`, data);
+    }
+
+    reportFoundItem(data: CreateFoundItemRequest): Observable<ItemResponse> {
+        return this.http.post<ItemResponse>(`${this.baseUrl}/items/found`, data);
+    }
+
+    // Upload
+    uploadFile(file: File): Observable<{ url: string }> {
+        const formData = new FormData();
+        formData.append('file', file);
+        return this.http.post<{ url: string }>(`${this.baseUrl}/upload`, formData);
+    }
+
+    // Enumerations
+    getCategories(): Observable<ItemCategory[]> {
+        return this.http.get<ItemCategory[]>(`${this.baseUrl}/enumerations/item-categories`);
+    }
+
+    getCampusLocations(): Observable<CampusLocation[]> {
+        return this.http.get<CampusLocation[]>(`${this.baseUrl}/enumerations/campus-locations`);
+    }
+
+    createCampusLocation(data: { name: string; latitude: number; longitude: number }): Observable<CampusLocation> {
+        return this.http.post<CampusLocation>(`${this.baseUrl}/enumerations/campus-locations`, data);
+    }
+
+    // Claims
+    submitClaim(data: any): Observable<ClaimResponse> {
+        return this.http.post<ClaimResponse>(`${this.baseUrl}/claims`, data);
+    }
+
+    getMyClaims(): Observable<Claim[]> {
+        return this.http.get<Claim[]>(`${this.baseUrl}/users/me/claims`);
+    }
+
+    getClaimsForItem(itemId: string): Observable<Claim[]> {
+        return this.http.get<Claim[]>(`${this.baseUrl}/items/${itemId}/claims`);
+    }
+
+    decideClaim(claimId: string, decision: 'APPROVED' | 'REJECTED'): Observable<void> {
+        return this.http.put<void>(
+            `${this.baseUrl}/claims/${claimId}/decide`,
+            { status: decision }
+        );
+    }
+
+    // User
+    updateProfile(data: UpdateUserRequest): Observable<UserDetailResponse> {
+        return this.http.put<UserDetailResponse>(`${this.baseUrl}/users/me`, data);
+    }
+
+    // Assets
+    getMyAssets(): Observable<any[]> {
+        return this.http.get<any[]>(`${this.baseUrl}/users/me/assets`);
+    }
+
+    createAsset(data: any): Observable<any> {
+        return this.http.post<any>(`${this.baseUrl}/assets`, data);
+    }
+}

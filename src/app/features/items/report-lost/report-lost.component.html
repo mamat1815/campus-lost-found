@@ -1,0 +1,125 @@
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-lg shadow px-6 py-8">
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold text-gray-900">Report Lost Item</h1>
+                <p class="mt-1 text-sm text-gray-600">Please provide as much detail as possible to help find your item.
+                </p>
+            </div>
+
+            <form [formGroup]="reportForm" (ngSubmit)="onSubmit()" class="space-y-6">
+                <!-- Basic Info -->
+                <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                    <div class="sm:col-span-6">
+                        <label for="title" class="block text-sm font-medium text-gray-700">Item Title</label>
+                        <input type="text" id="title" formControlName="title"
+                            class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border py-2 px-3">
+                    </div>
+
+                    <div class="sm:col-span-3">
+                        <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+                        <select id="category" formControlName="category_id"
+                            class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <option value="">Select Category</option>
+                            <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+                        </select>
+                    </div>
+
+                    <div class="sm:col-span-3">
+                        <label for="date_lost" class="block text-sm font-medium text-gray-700">Date Lost</label>
+                        <input type="date" id="date_lost" formControlName="date_lost"
+                            class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border py-2 px-3">
+                    </div>
+
+                    <div class="sm:col-span-6">
+                        <label for="location" class="block text-sm font-medium text-gray-700">Location Last Seen</label>
+                        <input type="text" id="location" formControlName="location_last_seen"
+                            class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border py-2 px-3"
+                            placeholder="e.g., Library 2nd Floor">
+                    </div>
+
+                    <div class="sm:col-span-6">
+                        <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                        <textarea id="description" formControlName="description" rows="3"
+                            class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border py-2 px-3"></textarea>
+                    </div>
+                </div>
+
+                <!-- Image Upload -->
+                <div>
+                    <app-file-upload (fileUploaded)="onImageUploaded($event)"></app-file-upload>
+                </div>
+
+                <!-- Additional Details -->
+                <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                    <div class="sm:col-span-3">
+                        <label for="urgency" class="block text-sm font-medium text-gray-700">Urgency</label>
+                        <select id="urgency" formControlName="urgency"
+                            class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <option value="NORMAL">Normal</option>
+                            <option value="HIGH">High</option>
+                            <option value="CRITICAL">Critical</option>
+                        </select>
+                    </div>
+
+                    <div class="sm:col-span-6 flex items-center space-x-6">
+                        <div class="flex items-center">
+                            <input id="offer_reward" formControlName="offer_reward" type="checkbox"
+                                class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <label for="offer_reward" class="ml-2 block text-sm text-gray-900">Offer Reward</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input id="show_phone" formControlName="show_phone" type="checkbox"
+                                class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <label for="show_phone" class="ml-2 block text-sm text-gray-900">Show Phone Publicly</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contacts -->
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="block text-sm font-medium text-gray-700">Contact Methods</label>
+                        <button type="button" (click)="addContact()"
+                            class="text-sm text-indigo-600 hover:text-indigo-500">
+                            + Add Contact
+                        </button>
+                    </div>
+                    <div formArrayName="contacts" class="space-y-3">
+                        <div *ngFor="let contact of contacts.controls; let i=index" [formGroupName]="i"
+                            class="flex gap-3">
+                            <select formControlName="platform"
+                                class="block w-1/3 py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <option value="WHATSAPP">WhatsApp</option>
+                                <option value="INSTAGRAM">Instagram</option>
+                                <option value="TELEGRAM">Telegram</option>
+                                <option value="EMAIL">Email</option>
+                                <option value="OTHER">Other</option>
+                            </select>
+                            <input type="text" formControlName="value"
+                                class="focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border py-2 px-3"
+                                placeholder="Contact Value (e.g. 08123...)">
+                            <button type="button" (click)="removeContact(i)" class="text-red-600 hover:text-red-800"
+                                *ngIf="contacts.length > 1">
+                                <i class="pi pi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+                    <button type="button" routerLink="/items"
+                        class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Cancel
+                    </button>
+                    <button type="submit" [disabled]="reportForm.invalid || isLoading"
+                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50">
+                        <span *ngIf="!isLoading">Submit Report</span>
+                        <span *ngIf="isLoading">Submitting...</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

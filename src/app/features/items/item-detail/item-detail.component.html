@@ -1,0 +1,164 @@
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div *ngIf="isLoading" class="flex justify-center py-12">
+            <i class="pi pi-spin pi-spinner text-4xl text-indigo-600"></i>
+        </div>
+
+        <div *ngIf="!isLoading && item" class="bg-white rounded-lg shadow overflow-hidden">
+            <!-- Header Image -->
+            <div class="h-64 w-full bg-gray-200 relative">
+                <img [src]="item.image_url | imageUrl" [alt]="item.title" class="w-full h-full object-cover">
+                <div class="absolute top-4 right-4">
+                    <span [class]="'px-3 py-1 text-sm font-semibold rounded-full ' + getStatusColor(item.status)">
+                        {{ item.status }}
+                    </span>
+                </div>
+                <div *ngIf="item.type === 'LOST' && (item.urgency === 'HIGH' || item.urgency === 'CRITICAL')"
+                    class="absolute top-4 left-4">
+                    <span class="px-3 py-1 text-sm font-semibold rounded-full bg-red-100 text-red-800">
+                        {{ item.urgency }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="p-6">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm font-medium text-indigo-600">{{ item.category_name }}</p>
+                        <h1 class="mt-2 text-3xl font-bold text-gray-900">{{ item.title }}</h1>
+                    </div>
+                    <div class="text-right text-sm text-gray-500">
+                        <p>Posted on {{ item.created_at | date:'mediumDate' }}</p>
+                    </div>
+                </div>
+
+                <div class="mt-6 border-t border-gray-200 pt-6">
+                    <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+                        <div class="sm:col-span-1">
+                            <dt class="text-sm font-medium text-gray-500">Location</dt>
+                            <dd class="mt-1 text-sm text-gray-900 flex items-center">
+                                <i class="pi pi-map-marker mr-2 text-gray-400"></i>
+                                {{ item.location_name || item.location_last_seen || 'Unknown' }}
+                            </dd>
+                        </div>
+                        <div class="sm:col-span-1">
+                            <dt class="text-sm font-medium text-gray-500">Date {{ item.type === 'LOST' ? 'Lost' :
+                                'Found' }}</dt>
+                            <dd class="mt-1 text-sm text-gray-900 flex items-center">
+                                <i class="pi pi-calendar mr-2 text-gray-400"></i>
+                                {{ (item.type === 'LOST' ? item.date_lost : item.date_found) | date:'mediumDate' }}
+                            </dd>
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <dt class="text-sm font-medium text-gray-500">Description</dt>
+                            <dd class="mt-1 text-sm text-gray-900 whitespace-pre-wrap">{{ item.description || 'No
+                                description provided.' }}</dd>
+                        </div>
+
+                        <div *ngIf="item.type === 'LOST' && item.offer_reward" class="sm:col-span-2">
+                            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="pi pi-star-fill text-yellow-400"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm text-yellow-700">
+                                            Reward Offered
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Info for Lost Items -->
+                        <div *ngIf="item.type === 'LOST' && item.contacts && item.contacts.length > 0"
+                            class="sm:col-span-2">
+                            <dt class="text-sm font-medium text-gray-500 mb-2">Contact Information</dt>
+                            <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                                <div *ngFor="let contact of item.contacts"
+                                    class="flex items-center p-3 border border-gray-200 rounded-md">
+                                    <i class="pi pi-user mr-3 text-gray-400"></i>
+                                    <div>
+                                        <p class="text-xs text-gray-500 uppercase">{{ contact.platform }}</p>
+                                        <p class="text-sm font-medium text-gray-900">{{ contact.value }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </dl>
+                </div>
+
+                <!-- Actions -->
+                <div class="mt-8 flex justify-end space-x-4">
+                    <button routerLink="/items"
+                        class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Back to List
+                    </button>
+
+                    <button *ngIf="item.type === 'FOUND' && item.status === 'OPEN'" (click)="startClaim()"
+                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Claim This Item
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Claim Modal -->
+    <div *ngIf="isClaiming" class="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div
+                class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div
+                            class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <i class="pi pi-check text-indigo-600"></i>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                Claim Item
+                            </h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500 mb-4">
+                                    To verify ownership, please answer the following questions set by the finder.
+                                </p>
+
+                                <form [formGroup]="claimForm" class="space-y-4">
+                                    <div formArrayName="answers">
+                                        <div *ngFor="let answer of answers.controls; let i=index" [formGroupName]="i">
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                                {{ answer.get('question')?.value }}
+                                            </label>
+                                            <input type="text" formControlName="answer"
+                                                class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md border py-2 px-3"
+                                                placeholder="Your answer">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" (click)="submitClaim()" [disabled]="isSubmittingClaim || claimForm.invalid"
+                        class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50">
+                        {{ isSubmittingClaim ? 'Submitting...' : 'Submit Claim' }}
+                    </button>
+                    <button type="button" (click)="cancelClaim()"
+                        class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

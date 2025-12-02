@@ -1,0 +1,117 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <div>
+            <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                Create your account
+            </h2>
+            <p class="mt-2 text-center text-sm text-gray-600">
+                Or
+                <a routerLink="/auth/login" class="font-medium text-indigo-600 hover:text-indigo-500">
+                    sign in to existing account
+                </a>
+            </p>
+        </div>
+        <form class="mt-8 space-y-6" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <div class="rounded-md shadow-sm -space-y-px">
+                <!-- Name -->
+                <div class="mb-4">
+                    <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                    <input id="name" formControlName="name" type="text" required
+                        class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm">
+                    <div *ngIf="registerForm.get('name')?.touched && registerForm.get('name')?.invalid"
+                        class="text-red-500 text-xs mt-1">
+                        Name is required
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
+                    <input id="email" formControlName="email" type="email" autocomplete="email" required
+                        class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm">
+                    <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid"
+                        class="text-red-500 text-xs mt-1">
+                        Valid email is required
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div class="mb-4">
+                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input id="password" formControlName="password" type="password" required
+                        class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm">
+                    <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid"
+                        class="text-red-500 text-xs mt-1">
+                        Password must be at least 6 characters
+                    </div>
+                </div>
+
+                <!-- Phone -->
+                <div class="mb-4">
+                    <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                    <input id="phone" formControlName="phone" type="tel" required
+                        class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm">
+                    <div *ngIf="registerForm.get('phone')?.touched && registerForm.get('phone')?.invalid"
+                        class="text-red-500 text-xs mt-1">
+                        Phone number is required
+                    </div>
+                </div>
+
+                <!-- Role -->
+                <div class="mb-4">
+                    <label for="role" class="block text-sm font-medium text-gray-700">Role</label>
+                    <select id="role" formControlName="role"
+                        class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <option value="PUBLIK">Public</option>
+                        <option value="MAHASISWA">Student (Mahasiswa)</option>
+                        <option value="STAFF_DOSEN">Staff / Lecturer</option>
+                    </select>
+                </div>
+
+                <!-- Identity Number -->
+                <div class="mb-4">
+                    <label for="identity_number" class="block text-sm font-medium text-gray-700">Identity Number
+                        (NIM/NIK/KTP)</label>
+                    <input id="identity_number" formControlName="identity_number" type="text" required
+                        class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm">
+                    <div *ngIf="registerForm.get('identity_number')?.touched && registerForm.get('identity_number')?.invalid"
+                        class="text-red-500 text-xs mt-1">
+                        Identity number is required
+                    </div>
+                </div>
+
+                <!-- Faculty (Conditional) -->
+                <div class="mb-4" *ngIf="showFaculty">
+                    <label for="faculty" class="block text-sm font-medium text-gray-700">Faculty</label>
+                    <select id="faculty" formControlName="faculty"
+                        class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <option value="">Select Faculty</option>
+                        <option value="FTI">Fakultas Teknologi Industri</option>
+                        <option value="FTSP">Fakultas Teknik Sipil dan Perencanaan</option>
+                        <option value="FH">Fakultas Hukum</option>
+                        <option value="FE">Fakultas Ekonomi</option>
+                        <option value="FPSI">Fakultas Psikologi</option>
+                        <option value="FK">Fakultas Kedokteran</option>
+                        <option value="FMIPA">Fakultas MIPA</option>
+                        <option value="FIAI">Fakultas Ilmu Agama Islam</option>
+                    </select>
+                    <div *ngIf="registerForm.get('faculty')?.touched && registerForm.get('faculty')?.invalid"
+                        class="text-red-500 text-xs mt-1">
+                        Faculty is required for students
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <button type="submit" [disabled]="registerForm.invalid || isLoading"
+                    class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50">
+                    <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                        <i class="pi pi-user-plus text-indigo-500 group-hover:text-indigo-400" aria-hidden="true"></i>
+                    </span>
+                    <span *ngIf="!isLoading">Register</span>
+                    <span *ngIf="isLoading">Registering...</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
