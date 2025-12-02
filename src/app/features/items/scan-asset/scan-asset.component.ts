@@ -124,9 +124,23 @@ export class ScanAssetComponent implements OnInit {
 
         this.apiService.reportAssetFound(this.assetId, requestData).subscribe({
             next: () => {
-                this.isSubmitting = false;
-                alert('Thank you! The owner has been notified.');
-                this.router.navigate(['/']);
+                // As requested: Update lost mode to true after reporting
+                if (this.assetId) {
+                    this.apiService.updateAssetLostMode(this.assetId, true).subscribe({
+                        next: () => {
+                            this.isSubmitting = false;
+                            alert('Thank you! The owner has been notified and asset marked as lost.');
+                            this.router.navigate(['/']);
+                        },
+                        error: (err) => {
+                            console.error('Failed to update lost mode', err);
+                            // Even if this fails, the report was successful, so we probably still want to finish
+                            this.isSubmitting = false;
+                            alert('Report submitted, but failed to update status. Owner notified.');
+                            this.router.navigate(['/']);
+                        }
+                    });
+                }
             },
             error: (err) => {
                 this.isSubmitting = false;
