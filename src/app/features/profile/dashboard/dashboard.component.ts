@@ -112,4 +112,21 @@ export class DashboardComponent implements OnInit {
             default: return 'bg-gray-100 text-gray-800';
         }
     }
+
+    downloadQrCode(asset: Asset): void {
+        if (!asset.qr_code_url) return;
+
+        // If the URL is relative, prepend the base URL (or let the browser handle it if it's same origin)
+        // Assuming qr_code_url might be a full URL or relative path.
+        // If it's from the backend, it might be relative or absolute.
+        // Let's try to use a direct link first.
+
+        const link = document.createElement('a');
+        link.href = asset.qr_code_url;
+        link.download = `qr-code-${asset.id}.png`;
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
 }
