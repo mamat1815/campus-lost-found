@@ -14,7 +14,7 @@ export class ImageUrlPipe implements PipeTransform {
       return value;
     }
     if (value.startsWith('/')) {
-      return `https://api.afsar.my.id/${value}`;
+      return `https://api.afsar.my.id${value}`;
     }
     return `https://api.afsar.my.id/${value}`;
   }
