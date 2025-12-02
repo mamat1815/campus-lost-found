@@ -95,4 +95,8 @@ export class ApiService {
     createAsset(data: CreateAssetRequest): Observable<Asset> {
         return this.http.post<Asset>(`${this.baseUrl}/assets`, data);
     }
+
+    reportAssetFound(id: string, data: { location_id: string; image_url?: string; note?: string }): Observable<any> {
+        return this.http.post(`${this.baseUrl}/assets/${id}/report-found`, data);
+    }
 }

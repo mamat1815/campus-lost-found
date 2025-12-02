@@ -15,5 +15,9 @@ export const routes: Routes = [
         path: 'profile',
         loadChildren: () => import('./features/profile/profile.routes').then(m => m.PROFILE_ROUTES),
         canActivate: [authGuard]
+    },
+    {
+        path: 'scan/:id',
+        loadComponent: () => import('./features/items/scan-asset/scan-asset.component').then(m => m.ScanAssetComponent)
     }
 ];

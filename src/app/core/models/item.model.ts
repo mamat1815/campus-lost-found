@@ -137,3 +137,9 @@ export interface CreateAssetRequest {
     private_image_url?: string;
     lost_mode?: boolean;
 }
+
+export interface ReportFoundRequest {
+    location_id: string;
+    image_url?: string;
+    note?: string;
+}
