@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { ItemResponse, Item, CreateLostItemRequest, CreateFoundItemRequest, CampusLocation, ItemCategory } from '../models/item.model';
+import { Observable, of } from 'rxjs';
+import { ItemResponse, Item, CreateLostItemRequest, CreateFoundItemRequest, CampusLocation, ItemCategory, Asset, CreateAssetRequest } from '../models/item.model';
 import { Claim, CreateClaimRequest, ClaimResponse } from '../models/claim.model';
 import { UserDetailResponse, UpdateUserRequest } from '../models/user.model';
 
@@ -26,8 +26,10 @@ export class ApiService {
         return this.http.get<ItemResponse>(`${this.baseUrl}/items/${id}`);
     }
 
+    // User Items (My Items) - Not available in API doc, mocking for now
     getMyItems(): Observable<ItemResponse[]> {
-        return this.http.get<ItemResponse[]>(`${this.baseUrl}/users/me/items`);
+        // return this.http.get<ItemResponse[]>(`${this.baseUrl}/users/me/items`);
+        return of([]);
     }
 
     reportLostItem(data: CreateLostItemRequest): Observable<ItemResponse> {
@@ -63,8 +65,10 @@ export class ApiService {
         return this.http.post<ClaimResponse>(`${this.baseUrl}/claims`, data);
     }
 
+    // User Claims (My Claims) - Not available in API doc, mocking for now
     getMyClaims(): Observable<Claim[]> {
-        return this.http.get<Claim[]>(`${this.baseUrl}/users/me/claims`);
+        // return this.http.get<Claim[]>(`${this.baseUrl}/users/me/claims`);
+        return of([]);
     }
 
     getClaimsForItem(itemId: string): Observable<Claim[]> {
@@ -84,11 +88,11 @@ export class ApiService {
     }
 
     // Assets
-    getMyAssets(): Observable<any[]> {
-        return this.http.get<any[]>(`${this.baseUrl}/users/me/assets`);
+    getMyAssets(): Observable<Asset[]> {
+        return this.http.get<Asset[]>(`${this.baseUrl}/assets/my`);
     }
 
-    createAsset(data: any): Observable<any> {
-        return this.http.post<any>(`${this.baseUrl}/assets`, data);
+    createAsset(data: CreateAssetRequest): Observable<Asset> {
+        return this.http.post<Asset>(`${this.baseUrl}/assets`, data);
     }
 }

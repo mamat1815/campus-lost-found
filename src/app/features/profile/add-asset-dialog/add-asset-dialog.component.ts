@@ -28,8 +28,7 @@ export class AddAssetDialogComponent implements OnInit {
         private toastr: ToastrService
     ) {
         this.assetForm = this.fb.group({
-            title: ['', [Validators.required]],
-            description: [''],
+            description: ['', [Validators.required]],
             category_id: ['', [Validators.required]]
         });
     }
@@ -56,7 +55,7 @@ export class AddAssetDialogComponent implements OnInit {
         this.isLoading = true;
         const payload = {
             ...this.assetForm.value,
-            image_url: this.uploadedImageUrl
+            private_image_url: this.uploadedImageUrl
         };
 
         this.apiService.createAsset(payload).subscribe({

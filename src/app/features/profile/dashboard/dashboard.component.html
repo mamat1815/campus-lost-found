@@ -11,161 +11,148 @@
                 <h1 class="text-2xl font-bold text-gray-900">{{ user?.name }}</h1>
                 <p class="text-sm text-gray-500">{{ user?.email }}</p>
                 <p class="text-xs text-indigo-600 mt-1 font-medium">{{ user?.role }}</p>
-                <div class="min-h-screen bg-gray-50 py-8">
-                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            </div>
+        </div>
 
-                        <!-- Profile Header -->
-                        <div class="bg-white rounded-lg shadow px-6 py-6 mb-8 flex items-center">
-                            <div
-                                class="h-16 w-16 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-2xl font-bold">
-                                {{ user?.name?.charAt(0) || 'U' }}
-                            </div>
-                            <div class="ml-4">
-                                <h1 class="text-2xl font-bold text-gray-900">{{ user?.name }}</h1>
-                                <p class="text-sm text-gray-500">{{ user?.email }}</p>
-                                <p class="text-xs text-indigo-600 mt-1 font-medium">{{ user?.role }}</p>
-                            </div>
-                        </div>
-
-                        <!-- Tabs -->
-                        <div class="border-b border-gray-200 mb-6">
-                            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                                <button (click)="switchTab('ITEMS')" [class]="activeTab === 'ITEMS' 
+        <!-- Tabs -->
+        <div class="border-b border-gray-200 mb-6">
+            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                <button (click)="switchTab('ITEMS')" [class]="activeTab === 'ITEMS' 
             ? 'border-indigo-500 text-indigo-600' 
             : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-                                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center">
-                                    <i class="pi pi-list mr-2"></i>
-                                    My Reported Items
-                                </button>
-                                <button (click)="switchTab('CLAIMS')" [class]="activeTab === 'CLAIMS' 
+                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center">
+                    <i class="pi pi-list mr-2"></i>
+                    My Reported Items
+                </button>
+                <button (click)="switchTab('CLAIMS')" [class]="activeTab === 'CLAIMS' 
             ? 'border-indigo-500 text-indigo-600' 
             : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-                                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center">
-                                    <i class="pi pi-check-square mr-2"></i>
-                                    My Claims
-                                </button>
-                                <button (click)="switchTab('ASSETS')" [class]="activeTab === 'ASSETS' 
+                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center">
+                    <i class="pi pi-check-square mr-2"></i>
+                    My Claims
+                </button>
+                <button (click)="switchTab('ASSETS')" [class]="activeTab === 'ASSETS' 
             ? 'border-indigo-500 text-indigo-600' 
             : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-                                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center">
-                                    <i class="pi pi-box mr-2"></i>
-                                    My Assets
-                                </button>
-                            </nav>
-                        </div>
+                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center">
+                    <i class="pi pi-box mr-2"></i>
+                    My Assets
+                </button>
+            </nav>
+        </div>
 
-                        <!-- Content -->
-                        <div *ngIf="isLoading" class="flex justify-center py-12">
-                            <i class="pi pi-spin pi-spinner text-4xl text-indigo-600"></i>
-                        </div>
+        <!-- Content -->
+        <div *ngIf="isLoading" class="flex justify-center py-12">
+            <i class="pi pi-spin pi-spinner text-4xl text-indigo-600"></i>
+        </div>
 
-                        <!-- My Items List -->
-                        <div *ngIf="!isLoading && activeTab === 'ITEMS'">
-                            <div *ngIf="myItems.length === 0" class="text-center py-12 bg-white rounded-lg shadow">
-                                <i class="pi pi-inbox text-4xl text-gray-400 mb-4"></i>
-                                <h3 class="mt-2 text-sm font-medium text-gray-900">No items reported yet</h3>
-                                <p class="mt-1 text-sm text-gray-500">Have you lost or found something?</p>
-                                <div class="mt-6">
-                                    <a routerLink="/items/report-lost"
-                                        class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                        Report Item
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                                <app-item-card *ngFor="let item of myItems" [item]="item"></app-item-card>
-                            </div>
-                        </div>
-
-                        <!-- My Claims List -->
-                        <div *ngIf="!isLoading && activeTab === 'CLAIMS'">
-                            <div *ngIf="myClaims.length === 0" class="text-center py-12 bg-white rounded-lg shadow">
-                                <i class="pi pi-file text-4xl text-gray-400 mb-4"></i>
-                                <h3 class="mt-2 text-sm font-medium text-gray-900">No claims made yet</h3>
-                                <p class="mt-1 text-sm text-gray-500">You haven't claimed any found items.</p>
-                            </div>
-
-                            <div class="bg-white shadow overflow-hidden sm:rounded-md" *ngIf="myClaims.length > 0">
-                                <ul class="divide-y divide-gray-200">
-                                    <li *ngFor="let claim of myClaims">
-                                        <div class="px-4 py-4 sm:px-6">
-                                            <div class="flex items-center justify-between">
-                                                <p class="text-sm font-medium text-indigo-600 truncate">
-                                                    Claim for Item ID: {{ claim.item_id }}
-                                                </p>
-                                                <div class="ml-2 flex-shrink-0 flex">
-                                                    <span
-                                                        [class]="'px-2 inline-flex text-xs leading-5 font-semibold rounded-full ' + getStatusColor(claim.status)">
-                                                        {{ claim.status }}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <div class="mt-2 sm:flex sm:justify-between">
-                                                <div class="sm:flex">
-                                                    <p class="flex items-center text-sm text-gray-500">
-                                                        <i class="pi pi-calendar mr-1.5 text-gray-400"></i>
-                                                        {{ claim.created_at | date:'medium' }}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <!-- My Assets List -->
-                        <div *ngIf="!isLoading && activeTab === 'ASSETS'">
-                            <div class="flex justify-end mb-4">
-                                <button (click)="openAddAssetModal()"
-                                    class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                    <i class="pi pi-plus mr-2"></i>
-                                    Add Asset
-                                </button>
-                            </div>
-
-                            <div *ngIf="myAssets.length === 0" class="text-center py-12 bg-white rounded-lg shadow">
-                                <i class="pi pi-box text-4xl text-gray-400 mb-4"></i>
-                                <h3 class="mt-2 text-sm font-medium text-gray-900">No assets registered yet</h3>
-                                <p class="mt-1 text-sm text-gray-500">Register your valuable items to prove ownership
-                                    easily.</p>
-                            </div>
-
-                            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                                <div *ngFor="let asset of myAssets" class="bg-white overflow-hidden shadow rounded-lg">
-                                    <div class="p-5">
-                                        <div class="flex items-center">
-                                            <div class="flex-shrink-0">
-                                                <i class="pi pi-box text-2xl text-indigo-600"></i>
-                                            </div>
-                                            <div class="ml-5 w-0 flex-1">
-                                                <dl>
-                                                    <dt class="text-sm font-medium text-gray-500 truncate">
-                                                        {{ asset.title }}
-                                                    </dt>
-                                                    <dd>
-                                                        <div class="text-lg font-medium text-gray-900">
-                                                            {{ asset.category_name || 'Uncategorized' }}
-                                                        </div>
-                                                    </dd>
-                                                </dl>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="bg-gray-50 px-5 py-3">
-                                        <div class="text-sm">
-                                            <p class="text-gray-500 truncate">{{ asset.description }}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <!-- Add Asset Modal -->
-                    <app-add-asset-dialog *ngIf="showAddAssetModal" (close)="closeAddAssetModal()"
-                        (assetCreated)="onAssetCreated()">
-                    </app-add-asset-dialog>
+        <!-- My Items List -->
+        <div *ngIf="!isLoading && activeTab === 'ITEMS'">
+            <div *ngIf="myItems.length === 0" class="text-center py-12 bg-white rounded-lg shadow">
+                <i class="pi pi-inbox text-4xl text-gray-400 mb-4"></i>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">No items reported yet</h3>
+                <p class="mt-1 text-sm text-gray-500">Have you lost or found something?</p>
+                <div class="mt-6">
+                    <a routerLink="/items/report-lost"
+                        class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Report Item
+                    </a>
                 </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <app-item-card *ngFor="let item of myItems" [item]="item"></app-item-card>
+            </div>
+        </div>
+
+        <!-- My Claims List -->
+        <div *ngIf="!isLoading && activeTab === 'CLAIMS'">
+            <div *ngIf="myClaims.length === 0" class="text-center py-12 bg-white rounded-lg shadow">
+                <i class="pi pi-file text-4xl text-gray-400 mb-4"></i>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">No claims made yet</h3>
+                <p class="mt-1 text-sm text-gray-500">You haven't claimed any found items.</p>
+            </div>
+
+            <div class="bg-white shadow overflow-hidden sm:rounded-md" *ngIf="myClaims.length > 0">
+                <ul class="divide-y divide-gray-200">
+                    <li *ngFor="let claim of myClaims">
+                        <div class="px-4 py-4 sm:px-6">
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm font-medium text-indigo-600 truncate">
+                                    Claim for Item ID: {{ claim.item_id }}
+                                </p>
+                                <div class="ml-2 flex-shrink-0 flex">
+                                    <span
+                                        [class]="'px-2 inline-flex text-xs leading-5 font-semibold rounded-full ' + getStatusColor(claim.status)">
+                                        {{ claim.status }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="mt-2 sm:flex sm:justify-between">
+                                <div class="sm:flex">
+                                    <p class="flex items-center text-sm text-gray-500">
+                                        <i class="pi pi-calendar mr-1.5 text-gray-400"></i>
+                                        {{ claim.created_at | date:'medium' }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- My Assets List -->
+        <div *ngIf="!isLoading && activeTab === 'ASSETS'">
+            <div class="flex justify-end mb-4">
+                <button (click)="openAddAssetModal()"
+                    class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <i class="pi pi-plus mr-2"></i>
+                    Add Asset
+                </button>
+            </div>
+
+            <div *ngIf="myAssets.length === 0" class="text-center py-12 bg-white rounded-lg shadow">
+                <i class="pi pi-box text-4xl text-gray-400 mb-4"></i>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">No assets registered yet</h3>
+                <p class="mt-1 text-sm text-gray-500">Register your valuable items to prove ownership
+                    easily.</p>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div *ngFor="let asset of myAssets" class="bg-white overflow-hidden shadow rounded-lg">
+                    <div class="p-5">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <i class="pi pi-box text-2xl text-indigo-600"></i>
+                            </div>
+                            <div class="ml-5 w-0 flex-1">
+                                <dl>
+                                    <dt class="text-sm font-medium text-gray-500 truncate">
+                                        {{ asset.category_name || 'Asset' }}
+                                    </dt>
+                                    <dd>
+                                        <div class="text-lg font-medium text-gray-900">
+                                            {{ asset.description | slice:0:20 }}{{ asset.description &&
+                                            asset.description.length > 20 ? '...' : '' }}
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-5 py-3">
+                        <div class="text-sm">
+                            <p class="text-gray-500 truncate">{{ asset.description }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Add Asset Modal -->
+    <app-add-asset-dialog *ngIf="showAddAssetModal" (close)="closeAddAssetModal()" (assetCreated)="onAssetCreated()">
+    </app-add-asset-dialog>
+</div>

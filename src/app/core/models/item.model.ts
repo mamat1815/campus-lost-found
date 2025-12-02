@@ -121,17 +121,19 @@ export interface ItemVerification {
 
 export interface Asset {
     id: string;
-    title: string;
     description?: string;
     category_id: string;
     category_name?: string;
-    image_url?: string;
+    private_image_url?: string;
+    qr_code_url?: string;
+    lost_mode: boolean;
     created_at: string;
+    owner_id?: string;
 }
 
 export interface CreateAssetRequest {
-    title: string;
-    description?: string;
+    description: string;
     category_id: string;
-    image_url?: string;
+    private_image_url?: string;
+    lost_mode?: boolean;
 }
